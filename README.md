@@ -5,9 +5,12 @@ A real-time uptime monitoring dashboard for deployment environments (Dev, QA, St
 ## Features
 
 - **URL Grouping** — Organize environments into collapsible folder-like groups (e.g., Development, Testing, Pre-Production). Each group shows status badges summarizing how many are Up / Down.
+- **Group Dropdown** — Select an existing group from a dropdown or type a new group name when adding monitors.
+- **Group Delete** — Delete an entire group and all its environments at once using the trash icon on the group header.
 - **Auto-Refresh** — Global toggle to enable/disable automatic status polling. Choose from intervals: 5s, 10s, 30s, 45s, 60s, 3min, or 5min. A "Refresh All Now" button is always available for manual checks.
 - **Real-time Status** — Each environment card shows a pulsing green dot (UP) or red dot (DOWN) with the last-checked timestamp.
-- **Add / Remove Monitors** — Quickly add new environments with a Group, Name, and URL. Remove any with a single click.
+- **Add / Remove Monitors** — Quickly add new environments with a Group, Name, and URL. Mandatory fields are marked with a red asterisk (*). Remove any with a single click.
+- **Inline Editing** — Click the pencil icon on any card to edit its name and URL directly. Save with ✓ or cancel with ✕.
 - **Persistent Settings** — All environments, groups, and auto-refresh preferences are saved in `localStorage` across sessions.
 
 ## How to Run the Application
