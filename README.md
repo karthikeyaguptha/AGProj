@@ -4,17 +4,16 @@ A real-time uptime monitoring dashboard for deployment environments (Dev, QA, St
 
 ## Features
 
-- **URL Grouping** — Organize environments into collapsible folder-like groups. Each group shows status badges (Up / Down / Pending).
-- **Group Dropdown** — Select an existing group from a dropdown or type a new group name.
-- **Group Delete & Duplicate** — Delete an entire group or duplicate it (with all monitors) using icons on the group header.
-- **In-Group Add Monitor** — Each group has a "+" tile at the end to quickly add a monitor directly into that group.
-- **Auto-Refresh** — Toggle automatic polling with intervals: 5s, 10s, 30s, 45s, 60s, 3min, 5min. Manual "Refresh All Now" always available.
-- **Gradient Status Cards** — Beautiful green/red gradient backgrounds give instant visual status feedback.
-- **Real-time Status** — Pulsing dots with separated timestamp and refresh button per card.
-- **Add / Remove Monitors** — Name is optional (auto-derived from URL hostname). Character limits: 50 for names, 2000 for URLs.
+- **Compact Section Bars** — Space-optimized inline headers (AUTO REFRESH, ADD MONITOR, EMAIL ALERTS) with controls on the same line.
+- **URL Grouping** — Collapsible groups with status badges. Delete, duplicate, or add monitors directly within each group.
+- **Drag-and-Drop Reorder** — Rearrange monitor tiles within a group by dragging and dropping.
+- **Email Alerts** — Configurable SMTP email notifications triggered automatically when an environment goes from UP → DOWN.
+- **Auto-Refresh** — Toggle polling with intervals from 5s to 5min.
+- **Gradient Status Cards** — Green/red gradient backgrounds for instant visual status feedback.
+- **In-Group Add Monitor** — "+" tile at the end of each group for quick additions.
 - **Inline Editing** — Always-visible pencil icon to edit name and URL directly on each card.
-- **Toast Notifications** — Slide-in toasts in the bottom-right with icon, message, close button, and auto-dismiss progress bar for all important actions.
-- **Persistent Settings** — Environments, groups, and auto-refresh preferences saved in `localStorage`.
+- **Toast Notifications** — Slide-in toasts with auto-dismiss progress bar for all important actions.
+- **Persistent Settings** — All data saved in `localStorage`.
 
 ## How to Run the Application
 
