@@ -25,11 +25,29 @@ Once the server is running, open your browser and navigate to:
 Your dashboard is now up and running!
 
 ## Building for Production
-If you want to build the optimized production version, run:
+
+If you want to run the optimized production version of the dashboard, you **must complete both steps in order**:
+
+### 1. Build the Application
+This step generates the `.next` build folder. Do not skip this step!
 ```bash
 npm run build
 ```
-Then, to start the production server:
+
+### 2. Start the Production Server
+Once the build finishes successfully, start the server:
 ```bash
 npm start
 ```
+
+---
+
+## Troubleshooting
+
+### Error: `"next" command not found`
+**Cause:** Node modules are missing.  
+**Solution:** You forgot to install dependencies. Run `npm install` first, then run your build or dev command again.
+
+### Error: `Could not find a production build in the '.next' directory.`
+**Cause:** You are trying to run `npm start` before building the app.  
+**Solution:** You must run `npm run build` to generate the `.next` folder before you can run `npm start`.
