@@ -23,6 +23,9 @@ const REFRESH_OPTIONS = [
   { label: "5 Min", value: 300000 },
 ];
 
+const MAX_NAME_CHARS = 50;
+const MAX_URL_CHARS = 2000;
+
 const DEFAULT_ENVS: Environment[] = [
   { id: "1", name: "Dev", url: "https://dev.example.com", group: "Development", status: "pending", lastChecked: null },
   { id: "2", name: "QA", url: "https://qa.example.com", group: "Testing", status: "pending", lastChecked: null },
@@ -161,16 +164,27 @@ export default function Dashboard() {
 
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newName.trim() || !newUrl.trim()) return;
+    if (!newUrl.trim()) return;
 
     let validUrl = newUrl.trim();
     if (!/^https?:\/\//i.test(validUrl)) {
       validUrl = `https://${validUrl}`;
     }
 
+    // Derive name from URL if not provided
+    let envName = newName.trim();
+    if (!envName) {
+      try {
+        const u = new URL(validUrl);
+        envName = u.hostname;
+      } catch {
+        envName = validUrl;
+      }
+    }
+
     const newEnv: Environment = {
       id: Date.now().toString(),
-      name: newName.trim(),
+      name: envName,
       url: validUrl,
       group: newGroup.trim() || "Default",
       status: "pending",
@@ -185,9 +199,7 @@ export default function Dashboard() {
 
   const removeEnvironment = (id: string) => {
     setEnvironments((prev) => prev.filter((env) => env.id !== id));
-    if (editingId === id) {
-      setEditingId(null);
-    }
+    if (editingId === id) setEditingId(null);
   };
 
   const removeGroup = (groupName: string) => {
@@ -212,32 +224,38 @@ export default function Dashboard() {
   };
 
   const saveEditing = (id: string) => {
-    if (!editName.trim() || !editUrl.trim()) return;
+    if (!editUrl.trim()) return;
 
     let validUrl = editUrl.trim();
     if (!/^https?:\/\//i.test(validUrl)) {
       validUrl = `https://${validUrl}`;
     }
 
+    let envName = editName.trim();
+    if (!envName) {
+      try {
+        const u = new URL(validUrl);
+        envName = u.hostname;
+      } catch {
+        envName = validUrl;
+      }
+    }
+
     setEnvironments((prev) =>
       prev.map((env) =>
         env.id === id
-          ? { ...env, name: editName.trim(), url: validUrl, status: "pending", lastChecked: null }
+          ? { ...env, name: envName, url: validUrl, status: "pending", lastChecked: null }
           : env
       )
     );
     setEditingId(null);
     setEditName("");
     setEditUrl("");
-    // Re-check after edit
-    checkStatus(id, editUrl.trim());
+    checkStatus(id, validUrl);
   };
 
   const handleEditKeyDown = (e: React.KeyboardEvent, id: string) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      saveEditing(id);
-    }
+    if (e.key === "Enter") { e.preventDefault(); saveEditing(id); }
     if (e.key === "Escape") cancelEditing();
   };
 
@@ -251,7 +269,6 @@ export default function Dashboard() {
 
   const groupNames = Object.keys(grouped).sort();
 
-  // Build unique group list for dropdown (including from current envs)
   const allGroupNames = Array.from(
     new Set(environments.map((e) => e.group).filter(Boolean))
   ).sort();
@@ -320,31 +337,29 @@ export default function Dashboard() {
             >
               <option value="">-- Select or type below --</option>
               {allGroupNames.map((g) => (
-                <option key={g} value={g}>
-                  {g}
-                </option>
+                <option key={g} value={g}>{g}</option>
               ))}
             </select>
             <input
               type="text"
               placeholder="Or enter new group"
               value={newGroup}
-              onChange={(e) => setNewGroup(e.target.value)}
+              onChange={(e) => setNewGroup(e.target.value.slice(0, MAX_NAME_CHARS))}
+              maxLength={MAX_NAME_CHARS}
               className="group-text-input"
             />
           </div>
           <div className="input-field">
-            <label htmlFor="env-name">
-              Environment Name <span className="required-asterisk">*</span>
-            </label>
+            <label htmlFor="env-name">Environment Name</label>
             <input
               id="env-name"
               type="text"
               placeholder="Enter Env. Name"
               value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              required
+              onChange={(e) => setNewName(e.target.value.slice(0, MAX_NAME_CHARS))}
+              maxLength={MAX_NAME_CHARS}
             />
+            <span className="char-count">{newName.length}/{MAX_NAME_CHARS}</span>
           </div>
           <div className="input-field">
             <label htmlFor="env-url">
@@ -355,9 +370,11 @@ export default function Dashboard() {
               type="text"
               placeholder="Enter URL"
               value={newUrl}
-              onChange={(e) => setNewUrl(e.target.value)}
+              onChange={(e) => setNewUrl(e.target.value.slice(0, MAX_URL_CHARS))}
+              maxLength={MAX_URL_CHARS}
               required
             />
+            <span className="char-count">{newUrl.length}/{MAX_URL_CHARS}</span>
           </div>
           <button type="submit" className="btn">
             Add Monitor
@@ -438,12 +455,13 @@ export default function Dashboard() {
                               type="text"
                               className="edit-input edit-name-input"
                               value={editName}
-                              onChange={(e) => setEditName(e.target.value)}
+                              onChange={(e) => setEditName(e.target.value.slice(0, MAX_NAME_CHARS))}
+                              maxLength={MAX_NAME_CHARS}
                               onKeyDown={(e) => handleEditKeyDown(e, env.id)}
                               placeholder="Env. Name"
                             />
                           ) : (
-                            <div className="env-name" onDoubleClick={() => startEditing(env)} title="Double-click to edit">
+                            <div className="env-name">
                               <div className="status-dot"></div>
                               {env.name}
                               <button
@@ -478,7 +496,8 @@ export default function Dashboard() {
                               type="text"
                               className="edit-input edit-url-input"
                               value={editUrl}
-                              onChange={(e) => setEditUrl(e.target.value)}
+                              onChange={(e) => setEditUrl(e.target.value.slice(0, MAX_URL_CHARS))}
+                              maxLength={MAX_URL_CHARS}
                               onKeyDown={(e) => handleEditKeyDown(e, env.id)}
                               placeholder="URL"
                             />
@@ -510,23 +529,28 @@ export default function Dashboard() {
                           <span className="card-status-text">
                             {env.status === "pending" ? "Checking..." : env.status}
                           </span>
-                          <button
-                            onClick={() => checkStatus(env.id, env.url)}
-                            className="refresh-btn"
-                            disabled={isRefreshing[env.id]}
-                          >
-                            <svg
-                              className={isRefreshing[env.id] ? "spin" : ""}
-                              width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                          <div className="card-footer-right">
+                            <span className="last-checked-time">
+                              {env.lastChecked
+                                ? env.lastChecked.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+                                : "—"}
+                            </span>
+                            <button
+                              onClick={() => checkStatus(env.id, env.url)}
+                              className="refresh-btn"
+                              disabled={isRefreshing[env.id]}
+                              title="Refresh status"
                             >
-                              <polyline points="23 4 23 10 17 10"></polyline>
-                              <polyline points="1 20 1 14 7 14"></polyline>
-                              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                            </svg>
-                            {env.lastChecked
-                              ? env.lastChecked.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })
-                              : "Refresh"}
-                          </button>
+                              <svg
+                                className={isRefreshing[env.id] ? "spin" : ""}
+                                width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                              >
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                              </svg>
+                            </button>
+                          </div>
                         </div>
                       </li>
                     );

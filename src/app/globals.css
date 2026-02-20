@@ -76,7 +76,7 @@ body {
   }
 }
 
-/* Typography elements */
+/* Typography */
 .header {
   text-align: center;
   padding: 3rem 1rem 1.5rem;
@@ -253,6 +253,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  position: relative;
 }
 
 .input-field label {
@@ -266,6 +267,13 @@ body {
   font-weight: 700;
   font-size: 1rem;
   margin-left: 2px;
+}
+
+.char-count {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-align: right;
+  opacity: 0.6;
 }
 
 .input-field input,
@@ -469,9 +477,10 @@ body {
   padding-left: 1.5rem;
 }
 
-/* Card Styles */
+/* ===================== */
+/* Card Styles (Gradient)*/
+/* ===================== */
 .env-card {
-  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   padding: 1.5rem;
@@ -484,35 +493,39 @@ body {
   position: relative;
   overflow: hidden;
   animation: slide-up 0.4s ease-out both;
+  /* Default glass bg */
+  background: var(--glass-bg);
 }
 
-.env-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--text-secondary);
-  transition: background 0.3s ease;
+/* Gradient backgrounds based on status */
+.env-card.status-up {
+  background: linear-gradient(145deg, rgba(34, 197, 94, 0.12) 0%, rgba(16, 185, 129, 0.06) 40%, var(--glass-bg) 100%);
+  border-color: rgba(34, 197, 94, 0.25);
 }
 
-.env-card.status-up::before {
-  background: var(--status-up-color);
+.env-card.status-down {
+  background: linear-gradient(145deg, rgba(239, 68, 68, 0.12) 0%, rgba(220, 38, 38, 0.06) 40%, var(--glass-bg) 100%);
+  border-color: rgba(239, 68, 68, 0.25);
 }
 
-.env-card.status-down::before {
-  background: var(--status-down-color);
-}
-
-.env-card.status-pending::before {
-  background: var(--status-pending-color);
+.env-card.status-pending {
+  background: linear-gradient(145deg, rgba(234, 179, 8, 0.08) 0%, rgba(202, 138, 4, 0.04) 40%, var(--glass-bg) 100%);
+  border-color: rgba(234, 179, 8, 0.2);
 }
 
 .env-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+}
+
+.env-card.status-up:hover {
+  border-color: rgba(34, 197, 94, 0.4);
+  box-shadow: 0 12px 24px rgba(34, 197, 94, 0.1);
+}
+
+.env-card.status-down:hover {
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 12px 24px rgba(239, 68, 68, 0.1);
 }
 
 .card-header {
@@ -552,7 +565,7 @@ body {
   opacity: 0.5;
 }
 
-/* Edit Icon on Card */
+/* Edit icon — always visible */
 .edit-icon-btn {
   background: transparent;
   border: none;
@@ -563,15 +576,12 @@ body {
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  opacity: 0;
   margin-left: 0.25rem;
-}
-
-.env-name:hover .edit-icon-btn {
-  opacity: 1;
+  opacity: 0.5;
 }
 
 .edit-icon-btn:hover {
+  opacity: 1;
   color: var(--accent-color);
   background: rgba(99, 102, 241, 0.1);
 }
@@ -653,6 +663,7 @@ body {
   color: var(--text-primary);
 }
 
+/* Card Footer — separated refresh & time */
 .card-footer {
   display: flex;
   justify-content: space-between;
@@ -681,18 +692,31 @@ body {
   color: var(--status-pending-color);
 }
 
+.card-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.last-checked-time {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
 .refresh-btn {
   background: transparent;
   color: var(--text-secondary);
   border: 1px solid var(--glass-border);
-  padding: 0.4rem 0.8rem;
+  padding: 0.4rem;
   border-radius: 6px;
   font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: center;
   font-family: inherit;
 }
 
