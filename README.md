@@ -1,6 +1,14 @@
-# Environment Status Dashboard
+# Environment Pulse
 
-A real-time uptime monitoring dashboard for deployment environments built with Next.js and Vanilla CSS. It features a full-stack proxy to avoid CORS errors when pinging URLs, and a sleek, modern UI with micro-animations.
+A real-time uptime monitoring dashboard for deployment environments (Dev, QA, Staging, UAT, etc.) built with Next.js and Vanilla CSS. Features a server-side proxy to avoid CORS errors, a sleek dark-mode UI with micro-animations, and smart grouping.
+
+## Features
+
+- **URL Grouping** — Organize environments into collapsible folder-like groups (e.g., Development, Testing, Pre-Production). Each group shows status badges summarizing how many are Up / Down.
+- **Auto-Refresh** — Global toggle to enable/disable automatic status polling. Choose from intervals: 5s, 10s, 30s, 45s, 60s, 3min, or 5min. A "Refresh All Now" button is always available for manual checks.
+- **Real-time Status** — Each environment card shows a pulsing green dot (UP) or red dot (DOWN) with the last-checked timestamp.
+- **Add / Remove Monitors** — Quickly add new environments with a Group, Name, and URL. Remove any with a single click.
+- **Persistent Settings** — All environments, groups, and auto-refresh preferences are saved in `localStorage` across sessions.
 
 ## How to Run the Application
 
