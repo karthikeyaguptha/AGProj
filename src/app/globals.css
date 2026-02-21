@@ -831,19 +831,33 @@ body {
   animation: spin 1s linear infinite;
 }
 
-.delete-btn {
+.card-actions {
+  display: flex;
+  gap: 0.15rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.card-action-btn {
   background: transparent;
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
   padding: 0.2rem;
-  border-radius: 3px;
+  border-radius: 4px;
   transition: all 0.2s;
   display: flex;
   align-items: center;
+  opacity: 0.5;
 }
 
-.delete-btn:hover {
+.card-action-btn:hover {
+  opacity: 1;
+  color: var(--accent-color);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.card-action-btn.delete-btn:hover {
   color: var(--status-down-color);
   background: rgba(239, 68, 68, 0.1);
 }
