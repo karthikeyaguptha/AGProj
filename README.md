@@ -4,7 +4,7 @@
 
 **Real-time uptime monitoring for your deployment environments**
 
-![Version](https://img.shields.io/badge/version-2.0-6366f1?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.1-6366f1?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000?style=flat-square&logo=nextdotjs)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
@@ -183,6 +183,16 @@ Environment Pulse runs **entirely in your browser**. No data is sent to external
 ---
 
 ## 📋 Changelog
+
+### v2.1 — 2026-02-21
+
+**✨ Space Optimization & Card Actions**
+
+- **In-group Add Monitor moved to header** — Replaced the space-wasting grid tile with a compact "+" button in the group header bar; inline form slides out below the header
+- **Duplicate monitor button** — Each card now has a copy icon (next to delete) to clone individual monitors within the same group
+- **Auto Refresh alignment fix** — Toggle + ON/OFF on label row, interval buttons + Refresh All on a dedicated second row
+
+---
 
 ### v2.0 — 2026-02-21
 
