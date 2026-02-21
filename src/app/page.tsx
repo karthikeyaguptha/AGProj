@@ -281,31 +281,40 @@ export default function Dashboard() {
       {/* ─── Auto-Refresh + Email Alerts (50/50 row) ─── */}
       <div className="split-row">
         <div className="section-bar split-half">
-          <span className="section-label">Auto Refresh</span>
-          <div className="section-bar-content">
+          <div className="split-top">
+            <span className="section-label">Auto Refresh</span>
             <label className="toggle-switch" htmlFor="ar-toggle">
               <input id="ar-toggle" type="checkbox" checked={autoRefreshEnabled} onChange={() => setAutoRefreshEnabled(!autoRefreshEnabled)} />
               <span className="toggle-slider"></span>
             </label>
             <span className="toggle-status">{autoRefreshEnabled ? "ON" : "OFF"}</span>
-            {autoRefreshEnabled && (
+          </div>
+          {autoRefreshEnabled && (
+            <div className="split-bottom">
               <div className="interval-options">
                 {REFRESH_OPTIONS.map((o) => (
                   <button key={o.value} className={`interval-btn ${refreshInterval === o.value ? "active" : ""}`} onClick={() => setRefreshInterval(o.value)}>{o.label}</button>
                 ))}
               </div>
-            )}
-            <button className="btn btn-sm" onClick={refreshAll}>Refresh All</button>
-          </div>
+              <button className="btn btn-sm" onClick={refreshAll}>Refresh All</button>
+            </div>
+          )}
+          {!autoRefreshEnabled && (
+            <div className="split-bottom">
+              <button className="btn btn-sm" onClick={refreshAll}>Refresh All</button>
+            </div>
+          )}
         </div>
         <div className="section-bar split-half">
-          <span className="section-label">Email Alerts</span>
-          <div className="section-bar-content">
+          <div className="split-top">
+            <span className="section-label">Email Alerts</span>
             <label className="toggle-switch" htmlFor="email-toggle">
               <input id="email-toggle" type="checkbox" checked={emailConfig.enabled} onChange={() => setEmailConfig((p) => ({ ...p, enabled: !p.enabled }))} />
               <span className="toggle-slider"></span>
             </label>
             <span className="toggle-status">{emailConfig.enabled ? "ON" : "OFF"}</span>
+          </div>
+          <div className="split-bottom">
             <button className="btn btn-sm btn-outline" onClick={() => setShowEmailConfig(!showEmailConfig)}>
               {showEmailConfig ? "Hide Config" : "Configure"}
             </button>

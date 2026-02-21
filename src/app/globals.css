@@ -240,6 +240,27 @@ body {
   flex: 1;
   min-width: 0;
   margin-bottom: 0;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.4rem;
+}
+
+.split-top {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.split-top .section-label {
+  min-width: auto;
+}
+
+.split-bottom {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding-left: 0;
 }
 
 /* ─── 2-Row Form ─── */
