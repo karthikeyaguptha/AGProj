@@ -1,66 +1,239 @@
-# Environment Pulse
+<div align="center">
 
-A real-time uptime monitoring dashboard for deployment environments (Dev, QA, Staging, UAT, etc.) built with Next.js and Vanilla CSS. Features a server-side proxy to avoid CORS errors, a sleek dark-mode UI with micro-animations, and smart grouping.
+# ⚡ Environment Pulse
 
-## Features
+**Real-time uptime monitoring for your deployment environments**
 
-- **Compact Section Bars** — Space-optimized inline headers (AUTO REFRESH, ADD MONITOR, EMAIL ALERTS) with controls on the same line.
-- **URL Grouping** — Collapsible groups with status badges. Delete, duplicate, or add monitors directly within each group.
-- **Drag-and-Drop Reorder** — Rearrange monitor tiles within a group by dragging and dropping.
-- **Email Alerts** — Configurable SMTP email notifications triggered automatically when an environment goes from UP → DOWN.
-- **Auto-Refresh** — Toggle polling with intervals from 5s to 5min.
-- **Gradient Status Cards** — Green/red gradient backgrounds for instant visual status feedback.
-- **In-Group Add Monitor** — "+" tile at the end of each group for quick additions.
-- **Inline Editing** — Always-visible pencil icon to edit name and URL directly on each card.
-- **Toast Notifications** — Slide-in toasts with auto-dismiss progress bar for all important actions.
-- **Persistent Settings** — All data saved in `localStorage`.
+![Version](https://img.shields.io/badge/version-1.0-6366f1?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)
+![Next.js](https://img.shields.io/badge/Next.js-16-000?style=flat-square&logo=nextdotjs)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
 
-## How to Run the Application
+A sleek, dark-themed dashboard to monitor the health of your deployment environments — Dev, QA, Staging, UAT, Production — all at a glance.
 
-Follow these simple steps to run the dashboard locally:
+</div>
 
-### 1. Install Dependencies
-Open your terminal in the project root directory and run:
+---
+
+![Dashboard Overview](docs/screenshots/dashboard-overview.png)
+
+## ✨ Features
+
+### 🖥️ Dashboard & Monitoring
+| Feature | Description |
+|---------|-------------|
+| **Real-time Status Checks** | Pings each URL and shows UP/DOWN with pulsing status dots |
+| **Gradient Status Cards** | Green gradient for UP, red gradient for DOWN — instant visual feedback |
+| **Auto-Refresh** | Configurable polling at 5s / 10s / 30s / 45s / 60s / 3m / 5m intervals |
+| **Manual Refresh** | One-click "Refresh All" or per-card refresh button |
+| **Compact Card Layout** | Space-efficient tiles fitting 4+ monitors per row |
+
+### 📂 Group Management
+| Feature | Description |
+|---------|-------------|
+| **URL Grouping** | Organize monitors into collapsible folder-like groups (Dev, QA, Staging, etc.) |
+| **Group Badges** | Live UP / DOWN / Pending counts on each group header |
+| **Group Duplicate** | Clone an entire group with all monitors in one click |
+| **Group Delete** | Remove a group and all its monitors |
+| **In-Group Add** | "+" tile at the end of each group for quick additions |
+| **Drag-and-Drop Reorder** | Rearrange monitor tiles within a group by dragging |
+
+### ✏️ Editing & Input
+| Feature | Description |
+|---------|-------------|
+| **Inline Editing** | Always-visible pencil icon to edit name and URL directly on each card |
+| **Optional Name** | Environment name auto-derives from URL hostname if left blank |
+| **Character Limits** | 50 chars for names, 2000 chars for URLs |
+
+### 📧 Email Alerts
+
+![Email Configuration](docs/screenshots/email-config.png)
+
+| Feature | Description |
+|---------|-------------|
+| **SMTP Configuration** | Full SMTP setup (Host, Port, Username, Password, From, To) |
+| **Auto-Trigger** | Sends email when any environment transitions from UP → DOWN |
+| **Gmail Support** | Works with Gmail App Passwords on `smtp.gmail.com:587` |
+
+### 🔔 Notifications & UI
+| Feature | Description |
+|---------|-------------|
+| **Toast Notifications** | Slide-in toasts with progress bar for add, edit, delete, duplicate actions |
+| **Privacy Policy** | Built-in privacy policy modal accessible from footer |
+| **Space-Optimized Layout** | 2-row Add Monitor form, 50/50 Auto Refresh + Email Alerts row |
+| **Persistent Settings** | All configurations saved in `localStorage` |
+
+### 📄 Footer & Compliance
+
+![Footer](docs/screenshots/footer.png)
+
+- Version badge (v1.0)
+- GitHub repository link
+- Privacy Policy modal
+- MIT License reference
+- © 2026 Environment Pulse — Made with ♥ for Scientific Games India Pvt., Ltd
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** ≥ 18.x
+- **npm** ≥ 9.x
+
+### Installation
+
 ```bash
+# Clone the repository
+git clone https://github.com/karthikeyaguptha/AGProj.git
+cd AGProj
+
+# Install dependencies
 npm install
 ```
 
-### 2. Start the Development Server
-To run the app in development mode, execute:
+### Development
+
 ```bash
+# Start the development server
 npm run dev
 ```
 
-### 3. Open the Application
-Once the server is running, open your browser and navigate to:
-[http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Your dashboard is now up and running!
+### Production Build
 
-## Building for Production
-
-If you want to run the optimized production version of the dashboard, you **must complete both steps in order**:
-
-### 1. Build the Application
-This step generates the `.next` build folder. Do not skip this step!
 ```bash
+# Build for production
 npm run build
+
+# Start the production server
+npm start
 ```
 
-### 2. Start the Production Server
-Once the build finishes successfully, start the server:
-```bash
-npm start
+The app will be available at [http://localhost:3000](http://localhost:3000).
+
+---
+
+## ⚙️ Configuration
+
+### Adding Monitors
+
+1. Use the **Add Monitor** form at the top of the dashboard
+2. Select an existing group from the dropdown or type a new group name
+3. Enter an environment name (optional — auto-derived from URL if blank)
+4. Enter the URL to monitor (mandatory)
+5. Click **Add**
+
+### Setting Up Email Alerts
+
+1. Toggle **Email Alerts** ON in the control bar
+2. Click **Configure** to expand the SMTP settings panel
+3. Fill in your SMTP details:
+
+| Field | Example | Required |
+|-------|---------|----------|
+| SMTP Host | `smtp.gmail.com` | ✅ |
+| Port | `587` | ✅ |
+| Username | `your@email.com` | ✅ |
+| Password | `app-password-here` | ✅ |
+| From Email | `alerts@yourdomain.com` | ❌ |
+| To Email(s) | `team@company.com` | ✅ |
+
+> **Gmail Users:** Generate an [App Password](https://myaccount.google.com/apppasswords) and use it in the Password field. Regular passwords will not work.
+
+### Auto-Refresh
+
+Toggle **Auto Refresh** ON and select an interval. Available intervals:
+
+`5s` · `10s` · `30s` · `45s` · `60s` · `3m` · `5m`
+
+---
+
+## 🏗️ Project Structure
+
+```
+AGProj/
+├── src/
+│   └── app/
+│       ├── api/
+│       │   ├── status/route.ts    # Health check proxy API
+│       │   └── alert/route.ts     # Email alert API (Nodemailer)
+│       ├── page.tsx               # Main dashboard component
+│       ├── globals.css            # Complete design system
+│       ├── layout.tsx             # Root layout with metadata
+│       └── icon.svg               # Heartbeat favicon
+├── docs/
+│   └── screenshots/               # Documentation screenshots
+├── LICENSE                         # MIT License
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
 ---
 
-## Troubleshooting
+## 🔒 Privacy
 
-### Error: `"next" command not found`
-**Cause:** Node modules are missing.  
-**Solution:** You forgot to install dependencies. Run `npm install` first, then run your build or dev command again.
+Environment Pulse runs **entirely in your browser**. No data is sent to external servers beyond the health-check requests to your configured URLs. All configurations, SMTP credentials, and preferences are stored in `localStorage` on your device.
 
-### Error: `Could not find a production build in the '.next' directory.`
-**Cause:** You are trying to run `npm start` before building the app.  
-**Solution:** You must run `npm run build` to generate the `.next` folder before you can run `npm start`.
+[View Full Privacy Policy →](docs/screenshots/privacy-policy.png)
+
+---
+
+## 📋 Changelog
+
+### v1.0 — 2026-02-21
+
+**🎉 Initial Release**
+
+#### Core Features
+- Real-time environment status monitoring with UP/DOWN detection
+- Gradient status cards with pulsing status indicators
+- Auto-refresh with configurable intervals (5s to 5m)
+- Manual per-card and global refresh
+
+#### Group Management
+- Collapsible URL grouping with folder icons and status badges
+- Group duplicate, delete, and in-group monitor addition
+- Drag-and-drop reordering of monitor tiles within groups
+
+#### Monitor Controls
+- Add Monitor form with group selector (2-row compact layout)
+- Inline editing of environment name and URL
+- Optional environment name (auto-derived from URL hostname)
+- Character limits (50 for names, 2000 for URLs)
+
+#### Email Alerts
+- SMTP email configuration panel
+- Automatic email notifications on UP → DOWN transition
+- Gmail App Password support
+
+#### UI & Polish
+- Dark glassmorphism theme with smooth animations
+- 50/50 split row for Auto Refresh + Email Alerts
+- Compact space-efficient card grid (4+ per row)
+- Toast notification system with auto-dismiss progress bar
+- Built-in Privacy Policy modal
+- Footer with copyright, GitHub, MIT License, version badge
+
+#### Infrastructure
+- Next.js 16 with App Router and TypeScript
+- Server-side API routes for status checks and email alerts
+- Nodemailer integration for email delivery
+- localStorage persistence for all settings
+
+---
+
+## 📝 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+Made with ♥ for **Scientific Games India Pvt., Ltd**
+
+</div>
