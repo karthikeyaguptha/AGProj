@@ -259,55 +259,57 @@ export default function Dashboard() {
         <p>Real-time uptime monitoring for your deployment environments</p>
       </header>
 
-      {/* ─── Auto-Refresh Bar (compact inline) ─── */}
-      <div className="section-bar">
-        <span className="section-label">Auto Refresh</span>
-        <div className="section-bar-content">
-          <label className="toggle-switch" htmlFor="ar-toggle">
-            <input id="ar-toggle" type="checkbox" checked={autoRefreshEnabled} onChange={() => setAutoRefreshEnabled(!autoRefreshEnabled)} />
-            <span className="toggle-slider"></span>
-          </label>
-          <span className="toggle-status">{autoRefreshEnabled ? "ON" : "OFF"}</span>
-          {autoRefreshEnabled && (
-            <div className="interval-options">
-              {REFRESH_OPTIONS.map((o) => (
-                <button key={o.value} className={`interval-btn ${refreshInterval === o.value ? "active" : ""}`} onClick={() => setRefreshInterval(o.value)}>{o.label}</button>
-              ))}
-            </div>
-          )}
-          <button className="btn btn-sm" onClick={refreshAll}>Refresh All</button>
-        </div>
-      </div>
-
-      {/* ─── Add Monitor Form (compact inline heading) ─── */}
+      {/* ─── Add Monitor Form (2 rows) ─── */}
       <div className="section-bar section-bar-form">
         <span className="section-label">Add Monitor</span>
-        <form onSubmit={handleAddSubmit} className="form-inline">
-          <select value={newGroup} onChange={(e) => setNewGroup(e.target.value)} className="select-sm">
-            <option value="">Group</option>
-            {allGroupNames.map((g) => <option key={g} value={g}>{g}</option>)}
-          </select>
-          <input type="text" placeholder="Or new group" value={newGroup} onChange={(e) => setNewGroup(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
-          <input type="text" placeholder="Env. Name" value={newName} onChange={(e) => setNewName(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
-          <div className="input-required-wrap">
-            <input type="text" placeholder="URL *" value={newUrl} onChange={(e) => setNewUrl(e.target.value.slice(0, MAX_URL))} maxLength={MAX_URL} required className="input-sm input-url" />
+        <form onSubmit={handleAddSubmit} className="form-2row">
+          <div className="form-row">
+            <select value={newGroup} onChange={(e) => setNewGroup(e.target.value)} className="select-sm">
+              <option value="">Group</option>
+              {allGroupNames.map((g) => <option key={g} value={g}>{g}</option>)}
+            </select>
+            <input type="text" placeholder="Or new group" value={newGroup} onChange={(e) => setNewGroup(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
           </div>
-          <button type="submit" className="btn btn-sm">Add</button>
+          <div className="form-row">
+            <input type="text" placeholder="Env. Name" value={newName} onChange={(e) => setNewName(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
+            <input type="text" placeholder="URL *" value={newUrl} onChange={(e) => setNewUrl(e.target.value.slice(0, MAX_URL))} maxLength={MAX_URL} required className="input-sm input-url" />
+            <button type="submit" className="btn btn-sm">Add</button>
+          </div>
         </form>
       </div>
 
-      {/* ─── Email Alerts Section (compact) ─── */}
-      <div className="section-bar">
-        <span className="section-label">Email Alerts</span>
-        <div className="section-bar-content">
-          <label className="toggle-switch" htmlFor="email-toggle">
-            <input id="email-toggle" type="checkbox" checked={emailConfig.enabled} onChange={() => setEmailConfig((p) => ({ ...p, enabled: !p.enabled }))} />
-            <span className="toggle-slider"></span>
-          </label>
-          <span className="toggle-status">{emailConfig.enabled ? "ON" : "OFF"}</span>
-          <button className="btn btn-sm btn-outline" onClick={() => setShowEmailConfig(!showEmailConfig)}>
-            {showEmailConfig ? "Hide Config" : "Configure"}
-          </button>
+      {/* ─── Auto-Refresh + Email Alerts (50/50 row) ─── */}
+      <div className="split-row">
+        <div className="section-bar split-half">
+          <span className="section-label">Auto Refresh</span>
+          <div className="section-bar-content">
+            <label className="toggle-switch" htmlFor="ar-toggle">
+              <input id="ar-toggle" type="checkbox" checked={autoRefreshEnabled} onChange={() => setAutoRefreshEnabled(!autoRefreshEnabled)} />
+              <span className="toggle-slider"></span>
+            </label>
+            <span className="toggle-status">{autoRefreshEnabled ? "ON" : "OFF"}</span>
+            {autoRefreshEnabled && (
+              <div className="interval-options">
+                {REFRESH_OPTIONS.map((o) => (
+                  <button key={o.value} className={`interval-btn ${refreshInterval === o.value ? "active" : ""}`} onClick={() => setRefreshInterval(o.value)}>{o.label}</button>
+                ))}
+              </div>
+            )}
+            <button className="btn btn-sm" onClick={refreshAll}>Refresh All</button>
+          </div>
+        </div>
+        <div className="section-bar split-half">
+          <span className="section-label">Email Alerts</span>
+          <div className="section-bar-content">
+            <label className="toggle-switch" htmlFor="email-toggle">
+              <input id="email-toggle" type="checkbox" checked={emailConfig.enabled} onChange={() => setEmailConfig((p) => ({ ...p, enabled: !p.enabled }))} />
+              <span className="toggle-slider"></span>
+            </label>
+            <span className="toggle-status">{emailConfig.enabled ? "ON" : "OFF"}</span>
+            <button className="btn btn-sm btn-outline" onClick={() => setShowEmailConfig(!showEmailConfig)}>
+              {showEmailConfig ? "Hide Config" : "Configure"}
+            </button>
+          </div>
         </div>
       </div>
 

@@ -229,17 +229,36 @@ body {
   transform: translateX(18px);
 }
 
-/* ─── Compact Form ─── */
-.section-bar-form {
-  flex-wrap: wrap;
+/* ─── Split Row (50/50) ─── */
+.split-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
-.form-inline {
+.split-half {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+/* ─── 2-Row Form ─── */
+.section-bar-form {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.form-2row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.form-row {
   display: flex;
   gap: 0.5rem;
-  flex-wrap: wrap;
   align-items: center;
-  flex: 1;
 }
 
 .select-sm,
@@ -247,9 +266,9 @@ body {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid var(--glass-border);
   color: var(--text-primary);
-  padding: 0.45rem 0.65rem;
+  padding: 0.4rem 0.6rem;
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   outline: none;
   transition: all 0.2s;
   font-family: inherit;
@@ -257,7 +276,7 @@ body {
 }
 
 .select-sm {
-  max-width: 130px;
+  max-width: 140px;
   cursor: pointer;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -273,28 +292,18 @@ body {
 
 .input-sm {
   flex: 1;
-  min-width: 100px;
+  min-width: 80px;
 }
 
 .input-url {
-  min-width: 180px;
+  min-width: 160px;
+  flex: 2;
 }
 
 .input-sm:focus,
 .select-sm:focus {
   border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-}
-
-.input-required-wrap {
-  position: relative;
-  flex: 2;
-  display: flex;
-  min-width: 180px;
-}
-
-.input-required-wrap .input-sm {
-  width: 100%;
 }
 
 .required-asterisk {
@@ -522,23 +531,23 @@ body {
   color: var(--status-down-color);
 }
 
-/* ─── Grid ─── */
+/* ─── Grid (compact) ─── */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.65rem;
   list-style: none;
-  padding-left: 1.25rem;
+  padding-left: 1rem;
 }
 
-/* ─── Cards ─── */
+/* ─── Cards (compact) ─── */
 .env-card {
   border: 1px solid var(--glass-border);
-  border-radius: 14px;
-  padding: 1.25rem;
+  border-radius: 10px;
+  padding: 0.75rem 0.85rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.4rem;
   transition: all 0.3s;
   backdrop-filter: blur(10px);
   position: relative;
@@ -569,18 +578,16 @@ body {
 }
 
 .env-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
 }
 
 .env-card.status-up:hover {
   border-color: rgba(34, 197, 94, 0.4);
-  box-shadow: 0 10px 20px rgba(34, 197, 94, 0.08);
 }
 
 .env-card.status-down:hover {
   border-color: rgba(239, 68, 68, 0.4);
-  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.08);
 }
 
 .card-header {
@@ -590,11 +597,11 @@ body {
 }
 
 .env-name {
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.3rem;
 }
 
 .status-dot {
@@ -644,9 +651,9 @@ body {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--accent-color);
   color: var(--text-primary);
-  padding: 0.4rem 0.6rem;
+  padding: 0.3rem 0.5rem;
   border-radius: 5px;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   outline: none;
   font-family: inherit;
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
@@ -655,7 +662,7 @@ body {
 .edit-name-input {
   flex: 1;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.88rem;
 }
 
 .edit-url-row {
@@ -702,13 +709,15 @@ body {
 
 .env-url {
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   word-break: break-all;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.3rem;
   text-decoration: none;
   transition: color 0.2s;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .env-url:hover {
@@ -720,13 +729,13 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
-  padding-top: 0.75rem;
+  padding-top: 0.5rem;
   border-top: 1px solid var(--glass-border);
 }
 
 .card-status-text {
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -808,14 +817,13 @@ body {
   color: var(--text-secondary);
 }
 
-/* ─── Add Monitor Tile ─── */
 .add-monitor-tile {
   background: transparent !important;
   border: 2px dashed var(--glass-border) !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 160px;
+  min-height: 100px;
   cursor: default !important;
 }
 
@@ -988,13 +996,17 @@ body {
     flex-direction: column;
   }
 
+  .form-row {
+    flex-wrap: wrap;
+  }
+
   .select-sm {
     max-width: none;
     width: 100%;
   }
 
-  .input-required-wrap {
-    width: 100%;
+  .split-row {
+    flex-direction: column;
   }
 
   .toast-container {
