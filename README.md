@@ -4,7 +4,7 @@
 
 **Real-time uptime monitoring for your deployment environments**
 
-![Version](https://img.shields.io/badge/version-1.0-6366f1?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.0-6366f1?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000?style=flat-square&logo=nextdotjs)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
@@ -183,6 +183,33 @@ Environment Pulse runs **entirely in your browser**. No data is sent to external
 ---
 
 ## 📋 Changelog
+
+### v2.0 — 2026-02-21
+
+**🎨 UI/UX Overhaul Milestone**
+
+#### Layout Redesign
+- **2-Row Add Monitor form** — Row 1: Group selection, Row 2: Name + URL + Add button
+- **50/50 Split Row** — Auto Refresh and Email Alerts now share one horizontal row
+- **Split-top / Split-bottom pattern** — Toggle + ON/OFF on the label row, controls (interval buttons, Refresh All, Configure) on a dedicated second row
+- **Compact card grid** — Reduced card size (220px min) with tighter padding, fitting 4+ tiles per row
+
+#### Visual Polish
+- Smaller card border-radius, font sizes, and spacing throughout
+- Refined card footer with compact status text
+- Compact Add Monitor tile (100px min-height)
+- URL text with overflow ellipsis
+
+#### Documentation
+- Full README rewrite with feature tables, deployment guide, and configuration docs
+- Embedded screenshots for dashboard overview, email config, footer, and privacy modal
+- Added `docs/screenshots/` directory with 4 reference screenshots
+
+#### Branding
+- Heartbeat SVG favicon matching footer logo
+- Attribution updated to Scientific Games India Pvt., Ltd
+
+---
 
 ### v1.0 — 2026-02-21
 
