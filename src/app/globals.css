@@ -552,6 +552,25 @@ body {
   color: var(--status-down-color);
 }
 
+.group-add-btn:hover {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: var(--status-up-color);
+  color: var(--status-up-color);
+}
+
+.inline-add-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  margin-top: 0.4rem;
+  margin-left: 1rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  animation: slide-up 0.2s ease-out both;
+}
+
 /* ─── Grid (compact) ─── */
 .dashboard-grid {
   display: grid;

@@ -379,8 +379,17 @@ export default function Dashboard() {
                   </div>
                 </button>
                 <button className="group-action-btn" onClick={() => duplicateGroup(gn)} title="Duplicate group"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg></button>
+                <button className="group-action-btn group-add-btn" onClick={() => { if (inGroupAddTarget === gn) { setInGroupAddTarget(null); } else { setInGroupAddTarget(gn); setInGroupName(""); setInGroupUrl(""); } }} title="Add monitor to group"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg></button>
                 <button className="group-delete-btn" onClick={() => removeGroup(gn)} title="Delete group"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg></button>
               </div>
+              {inGroupAddTarget === gn && (
+                <div className="inline-add-row">
+                  <input type="text" className="input-sm" placeholder="Name (optional)" value={inGroupName} onChange={(e) => setInGroupName(e.target.value.slice(0, MAX_NAME))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleInGroupAdd(gn); } if (e.key === "Escape") setInGroupAddTarget(null); }} />
+                  <input type="text" className="input-sm input-url" placeholder="URL *" value={inGroupUrl} onChange={(e) => setInGroupUrl(e.target.value.slice(0, MAX_URL))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleInGroupAdd(gn); } if (e.key === "Escape") setInGroupAddTarget(null); }} />
+                  <button className="btn btn-sm" onClick={() => handleInGroupAdd(gn)}>Add</button>
+                  <button className="edit-cancel-btn" onClick={() => setInGroupAddTarget(null)}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg></button>
+                </div>
+              )}
               {!collapsed && (
                 <ul className="dashboard-grid">
                   {envs.map((env) => {
@@ -426,24 +435,6 @@ export default function Dashboard() {
                       </li>
                     );
                   })}
-                  {/* Add Monitor Tile */}
-                  <li className="env-card add-monitor-tile">
-                    {inGroupAddTarget === gn ? (
-                      <div className="in-group-form">
-                        <input type="text" className="edit-input" placeholder="Name (optional)" value={inGroupName} onChange={(e) => setInGroupName(e.target.value.slice(0, MAX_NAME))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleInGroupAdd(gn); } if (e.key === "Escape") setInGroupAddTarget(null); }} />
-                        <input type="text" className="edit-input" placeholder="URL *" value={inGroupUrl} onChange={(e) => setInGroupUrl(e.target.value.slice(0, MAX_URL))} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleInGroupAdd(gn); } if (e.key === "Escape") setInGroupAddTarget(null); }} />
-                        <div className="in-group-form-actions">
-                          <button className="btn btn-sm" onClick={() => handleInGroupAdd(gn)}>Add</button>
-                          <button className="edit-cancel-btn" onClick={() => setInGroupAddTarget(null)}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg></button>
-                        </div>
-                      </div>
-                    ) : (
-                      <button className="add-tile-btn" onClick={() => { setInGroupAddTarget(gn); setInGroupName(""); setInGroupUrl(""); }}>
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                        <span>Add Monitor</span>
-                      </button>
-                    )}
-                  </li>
                 </ul>
               )}
             </section>
