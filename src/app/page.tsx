@@ -101,10 +101,15 @@ export default function Dashboard() {
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [editingGroupName, setEditingGroupName] = useState<string | null>(null);
   const [editGroupValue, setEditGroupValue] = useState("");
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importTab, setImportTab] = useState<"paste" | "file">("paste");
+  const [bulkText, setBulkText] = useState("");
+  const [importPreview, setImportPreview] = useState<string[]>([]);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const editNameRef = useRef<HTMLInputElement>(null);
   const prevStatusRef = useRef<Record<string, EnvStatus>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Toast
   const addToast = useCallback((message: string, type: ToastType = "info") => {
@@ -124,6 +129,69 @@ export default function Dashboard() {
     if (inGroupAddTarget === oldName) setInGroupAddTarget(newName);
     addToast(`Renamed "${oldName}" → "${newName}"`, "success");
     cancelRenameGroup();
+  };
+
+  // ── Bulk Import ──
+  const MAX_IMPORT = 25;
+
+  const parseLinks = (text: string): string[] => {
+    return text
+      .split(/[,;|\n]+/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0 && s !== "url" && !s.startsWith("#"))
+      .slice(0, MAX_IMPORT);
+  };
+
+  const handleBulkTextChange = (text: string) => {
+    setBulkText(text);
+    setImportPreview(parseLinks(text));
+  };
+
+  const addBulkMonitors = (links: { name: string; url: string; group: string }[]) => {
+    if (links.length === 0) { addToast("No valid links found", "error"); return; }
+    const capped = links.slice(0, MAX_IMPORT);
+    const newEnvs: Environment[] = capped.map((l) => {
+      let u = l.url.trim();
+      if (!/^https?:\/\//i.test(u)) u = `https://${u}`;
+      const n = l.name || deriveName(u);
+      return { id: Date.now().toString() + Math.random().toString(36).slice(2), name: n, url: u, group: l.group || "BulkLinksAdded", status: "pending" as EnvStatus, lastChecked: null };
+    });
+    setEnvironments((p) => [...p, ...newEnvs]);
+    newEnvs.forEach((e) => { prevStatusRef.current[e.id] = "pending"; checkStatus(e.id, e.url); });
+    addToast(`${newEnvs.length} monitor${newEnvs.length > 1 ? "s" : ""} imported`, "success");
+    setShowImportModal(false);
+    setBulkText("");
+    setImportPreview([]);
+  };
+
+  const handlePasteImport = () => {
+    const urls = parseLinks(bulkText);
+    addBulkMonitors(urls.map((u) => ({ name: "", url: u, group: "BulkLinksAdded" })));
+  };
+
+  const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target?.result as string;
+      if (!text) { addToast("Could not read file", "error"); return; }
+      const rows = text.split(/\r?\n/).map((r) => r.trim()).filter((r) => r.length > 0);
+      if (rows.length === 0) { addToast("File is empty", "error"); return; }
+      // Auto-detect header row
+      const firstCols = rows[0].split(",").map((c) => c.trim().toLowerCase());
+      const hasHeader = firstCols.some((c) => ["url", "name", "group", "link", "website"].includes(c));
+      const dataRows = hasHeader ? rows.slice(1) : rows;
+      const links = dataRows.slice(0, MAX_IMPORT).map((row) => {
+        const cols = row.split(",").map((c) => c.trim());
+        if (cols.length >= 3) return { name: cols[0], url: cols[1], group: cols[2] || "BulkLinksAdded" };
+        if (cols.length === 2) return { name: cols[0], url: cols[1], group: "BulkLinksAdded" };
+        return { name: "", url: cols[0], group: "BulkLinksAdded" };
+      }).filter((l) => l.url.length > 0);
+      addBulkMonitors(links);
+    };
+    reader.readAsText(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   // Init
@@ -279,8 +347,16 @@ export default function Dashboard() {
   return (
     <main className="container">
       <header className="header">
-        <h1>Environment Pulse</h1>
-        <p>Real-time uptime monitoring for your deployment environments</p>
+        <div className="header-top">
+          <div>
+            <h1>Environment Pulse</h1>
+            <p>Real-time uptime monitoring for your deployment environments</p>
+          </div>
+          <button className="import-link-btn" onClick={() => { setShowImportModal(true); setImportTab("paste"); setBulkText(""); setImportPreview([]); }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+            Import Links
+          </button>
+        </div>
       </header>
 
       {/* ─── Add Monitor Form (3-row) ─── */}
@@ -476,6 +552,60 @@ export default function Dashboard() {
             </section>
           );
         })
+      )}
+
+      {/* ─── Import Modal ─── */}
+      {showImportModal && (
+        <div className="modal-overlay" onClick={() => setShowImportModal(false)}>
+          <div className="modal-content import-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Import Links</h2>
+              <button className="modal-close" onClick={() => setShowImportModal(false)}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            </div>
+            <div className="import-tabs">
+              <button className={`import-tab ${importTab === "paste" ? "active" : ""}`} onClick={() => setImportTab("paste")}>Paste Links</button>
+              <button className={`import-tab ${importTab === "file" ? "active" : ""}`} onClick={() => setImportTab("file")}>Import from File</button>
+            </div>
+            <div className="modal-body">
+              {importTab === "paste" ? (
+                <>
+                  <p className="import-hint">Paste URLs separated by <strong>comma</strong>, <strong>semicolon</strong>, <strong>pipe (|)</strong>, or <strong>new line</strong>. Max {MAX_IMPORT} links.</p>
+                  <textarea
+                    className="import-textarea"
+                    placeholder={"https://example.com, https://api.example.com\nhttps://staging.example.com; https://dev.example.com"}
+                    value={bulkText}
+                    onChange={(e) => handleBulkTextChange(e.target.value)}
+                    rows={6}
+                  />
+                  {importPreview.length > 0 && (
+                    <div className="import-preview">
+                      <strong>{importPreview.length}</strong> link{importPreview.length !== 1 ? "s" : ""} detected
+                      {importPreview.length >= MAX_IMPORT && <span className="import-limit-warn"> (max {MAX_IMPORT} reached)</span>}
+                    </div>
+                  )}
+                  <button className="btn btn-sm import-action-btn" onClick={handlePasteImport} disabled={importPreview.length === 0}>Import {importPreview.length > 0 ? `${importPreview.length} Links` : ""}</button>
+                </>
+              ) : (
+                <>
+                  <p className="import-hint">Upload a <strong>.csv</strong> file. Supported formats:</p>
+                  <ul className="import-format-list">
+                    <li><code>url</code> — one column</li>
+                    <li><code>name, url</code> — two columns</li>
+                    <li><code>name, url, group</code> — three columns</li>
+                  </ul>
+                  <p className="import-hint">Header row is auto-detected. Max {MAX_IMPORT} links per import.</p>
+                  <label className="import-file-label">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+                    Choose CSV File
+                    <input ref={fileInputRef} type="file" accept=".csv" onChange={handleFileImport} className="import-file-input" />
+                  </label>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       {/* ─── Privacy Policy Modal ─── */}
