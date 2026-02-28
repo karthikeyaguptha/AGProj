@@ -296,12 +296,10 @@ export default function Dashboard() {
               <input type="text" placeholder="New Group Name" value={newGroup} onChange={(e) => setNewGroup(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
             </div>
             <div className="form-row">
-              <input type="text" placeholder="Env. Name" value={newName} onChange={(e) => setNewName(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
-              <span className="field-asterisk">*</span>
+              <input type="text" placeholder="Env. Name *" value={newName} onChange={(e) => setNewName(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm input-mandatory" />
             </div>
             <div className="form-row">
-              <input type="text" placeholder="URL" value={newUrl} onChange={(e) => setNewUrl(e.target.value.slice(0, MAX_URL))} maxLength={MAX_URL} required className="input-sm" />
-              <span className="field-asterisk">*</span>
+              <input type="text" placeholder="URL *" value={newUrl} onChange={(e) => setNewUrl(e.target.value.slice(0, MAX_URL))} maxLength={MAX_URL} required className="input-sm input-mandatory" />
             </div>
           </div>
           <button type="submit" className="btn btn-add">Add</button>
