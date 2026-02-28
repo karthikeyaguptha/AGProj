@@ -137,6 +137,6 @@ MIT License — see [LICENSE](LICENSE).
 
 <div align="center">
 
-Made with ♥ for [**Scientific Games India Pvt., Ltd**](https://www.scientificgames.com/company/)
+Made with ♥ for <a href="https://www.scientificgames.com/company/" target="_blank"><strong>Scientific Games India Pvt., Ltd</strong></a>
 
 </div>
