@@ -45,8 +45,8 @@ A sleek, dark-themed dashboard to monitor the health of your deployment environm
 
 ```bash
 # Clone & install
-git clone https://github.com/karthikeyaguptha/AGProj.git
-cd AGProj && npm install
+git clone https://github.com/karthikeyaguptha/agproj.git
+cd agproj && npm install
 
 # Development
 npm run dev          # → http://localhost:3000
@@ -86,7 +86,7 @@ Toggle **Email Alerts** ON → Click **Configure** → Fill SMTP details:
 ## 🏗️ Project Structure
 
 ```
-AGProj/
+agproj/
 ├── src/app/
 │   ├── api/
 │   │   ├── status/route.ts    # Health check proxy
