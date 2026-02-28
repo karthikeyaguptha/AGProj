@@ -263,10 +263,19 @@ body {
   padding-left: 0;
 }
 
+/* Single-row inline layout for Auto Refresh / Email */
+.split-inline {
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
 /* ─── 2-Row Form ─── */
 .section-bar-form {
   flex-wrap: wrap;
   align-items: flex-start;
+  justify-content: center;
 }
 
 .form-2row {
@@ -280,6 +289,39 @@ body {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+}
+
+.form-centered {
+  align-items: center;
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.form-row-center {
+  justify-content: center;
+}
+
+.btn-add {
+  background: var(--accent-color);
+  border: 1px solid var(--accent-color);
+  color: white;
+  padding: 0.5rem 1.6rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.btn-add:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 .select-sm,
@@ -491,6 +533,47 @@ body {
   font-size: 0.95rem;
 }
 
+.group-edit-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.15rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: all 0.2s;
+}
+
+.group-header:hover .group-edit-btn {
+  opacity: 0.7;
+}
+
+.group-edit-btn:hover {
+  opacity: 1 !important;
+  color: var(--accent-color);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.group-name-input {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--accent-color);
+  color: var(--text-primary);
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  outline: none;
+  min-width: 100px;
+  max-width: 260px;
+}
+
+.group-name-input:focus {
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+
 .group-count {
   font-size: 0.8rem;
   color: var(--text-secondary);
@@ -574,10 +657,41 @@ body {
 /* ─── Grid (compact) ─── */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.65rem;
   list-style: none;
   padding-left: 1rem;
+}
+
+/* Horizontal scroll layout for ≥9 monitors */
+.dashboard-grid-scroll {
+  grid-template-columns: none;
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(220px, 1fr);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.5rem;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dashboard-grid-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.dashboard-grid-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.dashboard-grid-scroll::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 3px;
+}
+
+.dashboard-grid-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.5);
 }
 
 /* ─── Cards (compact) ─── */
