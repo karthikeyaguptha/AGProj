@@ -274,7 +274,7 @@ body {
 /* ─── 2-Row Form ─── */
 .section-bar-form {
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .form-2row {
@@ -305,15 +305,16 @@ body {
   background: var(--accent-color);
   border: 1px solid var(--accent-color);
   color: white;
-  padding: 0.5rem 1.6rem;
+  padding: 0.55rem 2rem;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   font-family: inherit;
   white-space: nowrap;
   letter-spacing: 0.02em;
+  flex-shrink: 0;
 }
 
 .btn-add:hover {
@@ -321,6 +322,15 @@ body {
   border-color: var(--accent-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn-add-spacer {
+  padding: 0.55rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  visibility: hidden;
+  flex-shrink: 0;
 }
 
 .select-sm,

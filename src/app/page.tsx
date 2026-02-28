@@ -292,7 +292,8 @@ export default function Dashboard() {
               <option value="">Group</option>
               {allGroupNames.map((g) => <option key={g} value={g}>{g}</option>)}
             </select>
-            <input type="text" placeholder="Or new group" value={newGroup} onChange={(e) => setNewGroup(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
+            <input type="text" placeholder="Or new group" value={newGroup} onChange={(e) => setNewGroup(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm input-url" />
+            <span className="btn-add-spacer" aria-hidden="true">Add</span>
           </div>
           <div className="form-row">
             <input type="text" placeholder="Env. Name" value={newName} onChange={(e) => setNewName(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
