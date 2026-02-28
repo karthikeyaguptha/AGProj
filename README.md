@@ -4,7 +4,7 @@
 
 **Real-time uptime monitoring for your deployment environments**
 
-![Version](https://img.shields.io/badge/version-2.1-6366f1?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.5-6366f1?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000?style=flat-square&logo=nextdotjs)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
@@ -36,6 +36,7 @@ A sleek, dark-themed dashboard to monitor the health of your deployment environm
 | **Group Duplicate** | Clone an entire group with all monitors in one click |
 | **Group Delete** | Remove a group and all its monitors |
 | **In-Group Add** | "+" tile at the end of each group for quick additions |
+| **Group Rename** | Inline rename via pencil icon on group header — Enter to confirm, Escape to cancel |
 | **Drag-and-Drop Reorder** | Rearrange monitor tiles within a group by dragging |
 
 ### ✏️ Editing & Input
@@ -60,14 +61,15 @@ A sleek, dark-themed dashboard to monitor the health of your deployment environm
 |---------|-------------|
 | **Toast Notifications** | Slide-in toasts with progress bar for add, edit, delete, duplicate actions |
 | **Privacy Policy** | Built-in privacy policy modal accessible from footer |
-| **Space-Optimized Layout** | 2-row Add Monitor form, 50/50 Auto Refresh + Email Alerts row |
+| **Space-Optimized Layout** | Centered Add Monitor form, single-row Auto Refresh + Email Alerts |
+| **Adaptive Grid** | 4-column 2-row layout for ≤8 monitors; horizontal scroll with 2 rows for ≥9 |
 | **Persistent Settings** | All configurations saved in `localStorage` |
 
 ### 📄 Footer & Compliance
 
 ![Footer](docs/screenshots/footer.png)
 
-- Version badge (v1.0)
+- Version badge (v2.5)
 - GitHub repository link
 - Privacy Policy modal
 - MIT License reference
@@ -183,6 +185,17 @@ Environment Pulse runs **entirely in your browser**. No data is sent to external
 ---
 
 ## 📋 Changelog
+
+### v2.5 — 2026-02-28
+
+**🎯 UX Refinements & Adaptive Grid**
+
+- **Centered Add Monitor form** — Removed left-aligned label; form fields and bigger "Add" button centered for easy access
+- **Group Rename** — Pencil icon appears on group header hover; click to edit name inline with Enter/Escape/blur support
+- **Adaptive 2-row grid** — ≤8 monitors shown in a fixed 4-column × 2-row grid; ≥9 monitors switch to horizontal scrolling with custom scrollbar
+- **Single-row controls** — Auto Refresh and Email Alerts sections flattened to one inline row each (label + toggle + ON/OFF + buttons)
+
+---
 
 ### v2.1 — 2026-02-21
 

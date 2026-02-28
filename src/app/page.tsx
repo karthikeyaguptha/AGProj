@@ -99,6 +99,8 @@ export default function Dashboard() {
   const [emailConfig, setEmailConfig] = useState<EmailConfig>(DEFAULT_EMAIL);
   const [dragId, setDragId] = useState<string | null>(null);
   const [showPrivacy, setShowPrivacy] = useState(false);
+  const [editingGroupName, setEditingGroupName] = useState<string | null>(null);
+  const [editGroupValue, setEditGroupValue] = useState("");
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const editNameRef = useRef<HTMLInputElement>(null);
@@ -109,6 +111,20 @@ export default function Dashboard() {
     setToasts((p) => [...p, { id: Date.now().toString() + Math.random().toString(36).slice(2), message, type, createdAt: Date.now(), duration: TOAST_DUR }]);
   }, []);
   const dismissToast = useCallback((id: string) => { setToasts((p) => p.filter((t) => t.id !== id)); }, []);
+
+  // Rename group
+  const startRenameGroup = (groupName: string) => { setEditingGroupName(groupName); setEditGroupValue(groupName); };
+  const cancelRenameGroup = () => { setEditingGroupName(null); setEditGroupValue(""); };
+  const confirmRenameGroup = (oldName: string) => {
+    const newName = editGroupValue.trim();
+    if (!newName || newName === oldName) { cancelRenameGroup(); return; }
+    if (Object.keys(grouped).includes(newName)) { addToast(`Group "${newName}" already exists`, "error"); return; }
+    setEnvironments((prev) => prev.map((e) => e.group === oldName ? { ...e, group: newName } : e));
+    setCollapsedGroups((prev) => { const n = { ...prev }; if (oldName in n) { n[newName] = n[oldName]; delete n[oldName]; } return n; });
+    if (inGroupAddTarget === oldName) setInGroupAddTarget(newName);
+    addToast(`Renamed "${oldName}" → "${newName}"`, "success");
+    cancelRenameGroup();
+  };
 
   // Init
   useEffect(() => {
@@ -267,66 +283,57 @@ export default function Dashboard() {
         <p>Real-time uptime monitoring for your deployment environments</p>
       </header>
 
-      {/* ─── Add Monitor Form (2 rows) ─── */}
+      {/* ─── Add Monitor Form (3-row) ─── */}
       <div className="section-bar section-bar-form">
         <span className="section-label">Add Monitor</span>
-        <form onSubmit={handleAddSubmit} className="form-2row">
-          <div className="form-row">
-            <select value={newGroup} onChange={(e) => setNewGroup(e.target.value)} className="select-sm">
-              <option value="">Group</option>
-              {allGroupNames.map((g) => <option key={g} value={g}>{g}</option>)}
-            </select>
-            <input type="text" placeholder="Or new group" value={newGroup} onChange={(e) => setNewGroup(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
+        <form onSubmit={handleAddSubmit} className="form-3row">
+          <div className="form-fields">
+            <div className="form-row">
+              <select value={newGroup} onChange={(e) => setNewGroup(e.target.value)} className="select-sm">
+                <option value="">Group</option>
+                {allGroupNames.map((g) => <option key={g} value={g}>{g}</option>)}
+              </select>
+              <input type="text" placeholder="New Group Name" value={newGroup} onChange={(e) => setNewGroup(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
+            </div>
+            <div className="form-row">
+              <input type="text" placeholder="Env. Name" value={newName} onChange={(e) => setNewName(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm input-mandatory" />
+            </div>
+            <div className="form-row">
+              <input type="text" placeholder="URL *" value={newUrl} onChange={(e) => setNewUrl(e.target.value.slice(0, MAX_URL))} maxLength={MAX_URL} required className="input-sm input-mandatory" />
+            </div>
           </div>
-          <div className="form-row">
-            <input type="text" placeholder="Env. Name" value={newName} onChange={(e) => setNewName(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
-            <input type="text" placeholder="URL *" value={newUrl} onChange={(e) => setNewUrl(e.target.value.slice(0, MAX_URL))} maxLength={MAX_URL} required className="input-sm input-url" />
-            <button type="submit" className="btn btn-sm">Add</button>
-          </div>
+          <button type="submit" className="btn btn-add">Add</button>
         </form>
       </div>
 
-      {/* ─── Auto-Refresh + Email Alerts (50/50 row) ─── */}
+      {/* ─── Auto-Refresh + Email Alerts (single-row each) ─── */}
       <div className="split-row">
-        <div className="section-bar split-half">
-          <div className="split-top">
-            <span className="section-label">Auto Refresh</span>
-            <label className="toggle-switch" htmlFor="ar-toggle">
-              <input id="ar-toggle" type="checkbox" checked={autoRefreshEnabled} onChange={() => setAutoRefreshEnabled(!autoRefreshEnabled)} />
-              <span className="toggle-slider"></span>
-            </label>
-            <span className="toggle-status">{autoRefreshEnabled ? "ON" : "OFF"}</span>
-          </div>
+        <div className="section-bar split-half split-inline">
+          <span className="section-label">Auto Refresh</span>
+          <label className="toggle-switch" htmlFor="ar-toggle">
+            <input id="ar-toggle" type="checkbox" checked={autoRefreshEnabled} onChange={() => setAutoRefreshEnabled(!autoRefreshEnabled)} />
+            <span className="toggle-slider"></span>
+          </label>
+          <span className="toggle-status">{autoRefreshEnabled ? "ON" : "OFF"}</span>
           {autoRefreshEnabled && (
-            <div className="split-bottom">
-              <div className="interval-options">
-                {REFRESH_OPTIONS.map((o) => (
-                  <button key={o.value} className={`interval-btn ${refreshInterval === o.value ? "active" : ""}`} onClick={() => setRefreshInterval(o.value)}>{o.label}</button>
-                ))}
-              </div>
-              <button className="btn btn-sm" onClick={refreshAll}>Refresh All</button>
+            <div className="interval-options">
+              {REFRESH_OPTIONS.map((o) => (
+                <button key={o.value} className={`interval-btn ${refreshInterval === o.value ? "active" : ""}`} onClick={() => setRefreshInterval(o.value)}>{o.label}</button>
+              ))}
             </div>
           )}
-          {!autoRefreshEnabled && (
-            <div className="split-bottom">
-              <button className="btn btn-sm" onClick={refreshAll}>Refresh All</button>
-            </div>
-          )}
+          <button className="btn btn-sm" onClick={refreshAll}>Refresh All</button>
         </div>
-        <div className="section-bar split-half">
-          <div className="split-top">
-            <span className="section-label">Email Alerts</span>
-            <label className="toggle-switch" htmlFor="email-toggle">
-              <input id="email-toggle" type="checkbox" checked={emailConfig.enabled} onChange={() => setEmailConfig((p) => ({ ...p, enabled: !p.enabled }))} />
-              <span className="toggle-slider"></span>
-            </label>
-            <span className="toggle-status">{emailConfig.enabled ? "ON" : "OFF"}</span>
-          </div>
-          <div className="split-bottom">
-            <button className="btn btn-sm btn-outline" onClick={() => setShowEmailConfig(!showEmailConfig)}>
-              {showEmailConfig ? "Hide Config" : "Configure"}
-            </button>
-          </div>
+        <div className="section-bar split-half split-inline">
+          <span className="section-label">Email Alerts</span>
+          <label className="toggle-switch" htmlFor="email-toggle">
+            <input id="email-toggle" type="checkbox" checked={emailConfig.enabled} onChange={() => setEmailConfig((p) => ({ ...p, enabled: !p.enabled }))} />
+            <span className="toggle-slider"></span>
+          </label>
+          <span className="toggle-status">{emailConfig.enabled ? "ON" : "OFF"}</span>
+          <button className="btn btn-sm btn-outline" onClick={() => setShowEmailConfig(!showEmailConfig)}>
+            {showEmailConfig ? "Hide Config" : "Configure"}
+          </button>
         </div>
       </div>
 
@@ -377,7 +384,25 @@ export default function Dashboard() {
                   <div className="group-header-left">
                     <svg className={`chevron ${collapsed ? "collapsed" : ""}`} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
                     <svg className="folder-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" /></svg>
-                    <span className="group-name">{gn}</span>
+                    {editingGroupName === gn ? (
+                      <input
+                        className="group-name-input"
+                        value={editGroupValue}
+                        onChange={(e) => setEditGroupValue(e.target.value.slice(0, MAX_NAME))}
+                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); confirmRenameGroup(gn); } if (e.key === "Escape") cancelRenameGroup(); }}
+                        onBlur={() => confirmRenameGroup(gn)}
+                        onClick={(e) => e.stopPropagation()}
+                        autoFocus
+                        maxLength={MAX_NAME}
+                      />
+                    ) : (
+                      <>
+                        <span className="group-name">{gn}</span>
+                        <button className="group-edit-btn" onClick={(e) => { e.stopPropagation(); startRenameGroup(gn); }} title="Rename group">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                        </button>
+                      </>
+                    )}
                     <span className="group-count">({s.total})</span>
                   </div>
                   <div className="group-badges">
@@ -399,7 +424,7 @@ export default function Dashboard() {
                 </div>
               )}
               {!collapsed && (
-                <ul className="dashboard-grid">
+                <ul className={envs.length > 8 ? "dashboard-grid dashboard-grid-scroll" : "dashboard-grid"}>
                   {envs.map((env) => {
                     const isEditing = editingId === env.id;
                     return (
@@ -496,7 +521,7 @@ export default function Dashboard() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
             <span>Environment Pulse</span>
           </div>
-          <div className="footer-version">v2.1</div>
+          <div className="footer-version">v2.5</div>
         </div>
         <div className="footer-links">
           <a href="https://github.com/karthikeyaguptha/AGProj" target="_blank" rel="noopener noreferrer" className="footer-link">
