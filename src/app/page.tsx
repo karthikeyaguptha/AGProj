@@ -283,22 +283,28 @@ export default function Dashboard() {
         <p>Real-time uptime monitoring for your deployment environments</p>
       </header>
 
-      {/* ─── Add Monitor Form ─── */}
+      {/* ─── Add Monitor Form (3-row) ─── */}
       <div className="section-bar section-bar-form">
         <span className="section-label">Add Monitor</span>
-        <form onSubmit={handleAddSubmit} className="form-2row">
-          <div className="form-row">
-            <select value={newGroup} onChange={(e) => setNewGroup(e.target.value)} className="select-sm">
-              <option value="">Group</option>
-              {allGroupNames.map((g) => <option key={g} value={g}>{g}</option>)}
-            </select>
-            <input type="text" placeholder="Or new group" value={newGroup} onChange={(e) => setNewGroup(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
+        <form onSubmit={handleAddSubmit} className="form-3row">
+          <div className="form-fields">
+            <div className="form-row">
+              <select value={newGroup} onChange={(e) => setNewGroup(e.target.value)} className="select-sm">
+                <option value="">Group</option>
+                {allGroupNames.map((g) => <option key={g} value={g}>{g}</option>)}
+              </select>
+              <input type="text" placeholder="New Group Name" value={newGroup} onChange={(e) => setNewGroup(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
+            </div>
+            <div className="form-row">
+              <input type="text" placeholder="Env. Name" value={newName} onChange={(e) => setNewName(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
+              <span className="field-asterisk">*</span>
+            </div>
+            <div className="form-row">
+              <input type="text" placeholder="URL" value={newUrl} onChange={(e) => setNewUrl(e.target.value.slice(0, MAX_URL))} maxLength={MAX_URL} required className="input-sm" />
+              <span className="field-asterisk">*</span>
+            </div>
           </div>
-          <div className="form-row">
-            <input type="text" placeholder="Env. Name" value={newName} onChange={(e) => setNewName(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
-            <input type="text" placeholder="URL *" value={newUrl} onChange={(e) => setNewUrl(e.target.value.slice(0, MAX_URL))} maxLength={MAX_URL} required className="input-sm input-url" />
-            <button type="submit" className="btn btn-add">Add</button>
-          </div>
+          <button type="submit" className="btn btn-add">Add</button>
         </form>
       </div>
 

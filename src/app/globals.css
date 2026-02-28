@@ -277,11 +277,35 @@ body {
   align-items: center;
 }
 
-.form-2row {
+.form-2row,
+.form-3row {
   display: flex;
-  flex-direction: column;
   gap: 0.5rem;
   flex: 1;
+}
+
+.form-2row {
+  flex-direction: column;
+}
+
+.form-3row {
+  flex-direction: row;
+  align-items: center;
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+}
+
+.field-asterisk {
+  color: #ef4444;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-left: -0.2rem;
 }
 
 .form-row {
