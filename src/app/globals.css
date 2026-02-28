@@ -300,19 +300,9 @@ body {
   flex: 1;
 }
 
-.field-asterisk {
-  color: #ef4444;
-  font-weight: 700;
-  font-size: 1rem;
-  flex-shrink: 0;
-  margin-left: -0.2rem;
-}
-
 .input-mandatory::placeholder {
   color: var(--text-secondary);
 }
-
-/* Red asterisk in placeholder — not natively supported, handled via placeholder text */
 
 .form-row {
   display: flex;
@@ -320,23 +310,12 @@ body {
   align-items: center;
 }
 
-.form-centered {
-  align-items: center;
-  max-width: 720px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.form-row-center {
-  justify-content: center;
-}
-
 .btn-add {
   background: var(--accent-color);
   border: 1px solid var(--accent-color);
   color: white;
-  padding: 0.55rem 2.6rem;
-  border-radius: 8px;
+  padding: 2.6rem 2.6rem;
+  border-radius: 10px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
@@ -345,7 +324,9 @@ body {
   white-space: nowrap;
   letter-spacing: 0.02em;
   flex-shrink: 0;
-  align-self: stretch;
+  align-self: center;
+  width: 100px;
+  height: 100px;
 }
 
 .btn-add:hover {
@@ -353,15 +334,6 @@ body {
   border-color: var(--accent-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-}
-
-.btn-add-spacer {
-  padding: 0.55rem 2rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  visibility: hidden;
-  flex-shrink: 0;
 }
 
 .select-sm,
@@ -447,6 +419,7 @@ body {
 .btn-sm {
   font-size: 0.8rem;
   padding: 0.4rem 0.75rem;
+  margin-left: auto;
 }
 
 .btn-outline {
