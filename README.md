@@ -9,6 +9,8 @@
 ![Next.js](https://img.shields.io/badge/Next.js-16-000?style=flat-square&logo=nextdotjs)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
 
+[![Live Demo](https://img.shields.io/badge/🔴_Live_Demo-environmentpulse.vercel.app-6366f1?style=for-the-badge)](https://environmentpulse.vercel.app/)
+
 A sleek, dark-themed dashboard to monitor the health of your deployment environments — Dev, QA, Staging, UAT, Production — all at a glance.
 
 </div>
