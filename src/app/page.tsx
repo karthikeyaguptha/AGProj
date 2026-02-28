@@ -671,7 +671,7 @@ export default function Dashboard() {
         </div>
         <div className="footer-copyright">
           © {new Date().getFullYear()} Environment Pulse. All rights reserved.
-          <span className="footer-heart"> Made with ♥ for Scientific Games India Pvt., Ltd</span>
+          <span className="footer-heart"> Made with ♥ for <a href="https://www.scientificgames.com/company/" target="_blank" rel="noopener noreferrer">Scientific Games India Pvt., Ltd</a></span>
         </div>
       </footer>
 
