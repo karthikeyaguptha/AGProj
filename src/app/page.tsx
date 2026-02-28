@@ -283,17 +283,18 @@ export default function Dashboard() {
         <p>Real-time uptime monitoring for your deployment environments</p>
       </header>
 
-      {/* ─── Add Monitor Form (centered) ─── */}
+      {/* ─── Add Monitor Form ─── */}
       <div className="section-bar section-bar-form">
-        <form onSubmit={handleAddSubmit} className="form-2row form-centered">
-          <div className="form-row form-row-center">
+        <span className="section-label">Add Monitor</span>
+        <form onSubmit={handleAddSubmit} className="form-2row">
+          <div className="form-row">
             <select value={newGroup} onChange={(e) => setNewGroup(e.target.value)} className="select-sm">
               <option value="">Group</option>
               {allGroupNames.map((g) => <option key={g} value={g}>{g}</option>)}
             </select>
             <input type="text" placeholder="Or new group" value={newGroup} onChange={(e) => setNewGroup(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
           </div>
-          <div className="form-row form-row-center">
+          <div className="form-row">
             <input type="text" placeholder="Env. Name" value={newName} onChange={(e) => setNewName(e.target.value.slice(0, MAX_NAME))} maxLength={MAX_NAME} className="input-sm" />
             <input type="text" placeholder="URL *" value={newUrl} onChange={(e) => setNewUrl(e.target.value.slice(0, MAX_URL))} maxLength={MAX_URL} required className="input-sm input-url" />
             <button type="submit" className="btn btn-add">Add</button>
