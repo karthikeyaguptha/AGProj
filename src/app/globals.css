@@ -1350,6 +1350,17 @@ body {
   margin-right: 0.5rem;
 }
 
+.footer-heart a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-heart a:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
 /* ─── Modal ─── */
 .modal-overlay {
   position: fixed;
