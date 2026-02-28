@@ -108,23 +108,23 @@ Runs **entirely in your browser**. No data sent to external servers beyond healt
 
 ## 📋 Changelog
 
-### v2.5 — 2026-02-28
+### v2.5
 - **Bulk Import** — Paste links (comma/semicolon/pipe/newline) or upload CSV (1–3 columns with header detection), max 25 per batch
 - **3-Row Add Monitor** — Group + New Group Name → Env Name → URL, Add button right-aligned
 - **Group Rename** — Pencil icon on hover, inline edit with Enter/Escape
 - **Adaptive Grid** — ≤8: fixed 4×2 grid · ≥9: horizontal scroll
 - **Single-row controls** — Auto Refresh + Email Alerts flattened
 
-### v2.1 — 2026-02-21
+### v2.1
 - In-group Add moved to header "+" button
 - Per-card duplicate button
 - Auto-refresh layout fix
 
-### v2.0 — 2026-02-21
+### v2.0
 - 2-row Add Monitor form, 50/50 split controls, compact card grid
 - Full README with screenshots, heartbeat favicon, company branding
 
-### v1.0 — 2026-02-21
+### v1.0
 - Initial release: status monitoring, groups, drag-and-drop, email alerts, toast notifications, dark glassmorphism theme, Next.js 16 + TypeScript
 
 ---
@@ -137,6 +137,6 @@ MIT License — see [LICENSE](LICENSE).
 
 <div align="center">
 
-Made with ♥ for **Scientific Games India Pvt., Ltd**
+Made with ♥ for [**Scientific Games India Pvt., Ltd**](https://www.scientificgames.com/company/)
 
 </div>
