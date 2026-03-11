@@ -4,7 +4,7 @@
 
 **Real-time uptime monitoring for your deployment environments**
 
-![Version](https://img.shields.io/badge/version-2.5-6366f1?style=flat-square)
+![Version](https://img.shields.io/badge/version-3.0-6366f1?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000?style=flat-square&logo=nextdotjs)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
@@ -34,10 +34,15 @@ A sleek, dark-themed dashboard to monitor the health of your deployment environm
 | | Header Detection | CSV header rows auto-detected and skipped |
 | **Email Alerts** | SMTP Config | Full SMTP setup (Host, Port, User, Pass, From, To) |
 | | Auto-Trigger | Email sent on UP → DOWN transition |
+| **Sharing** | URL Share | Encode config in URL hash — works offline, no server needed |
+| | Short Links | Server-stored configs at `/s/abc123` — clean shareable URLs |
+| | Merge / Replace | Recipients choose to merge with or replace their dashboard |
 | **UI** | Adaptive Grid | ≤8 monitors: 4-col grid · ≥9 monitors: horizontal scroll |
 | | Toast System | Slide-in notifications with progress bar auto-dismiss |
 | | Privacy Policy | Built-in modal accessible from footer |
 | **Persistence** | localStorage | All monitors, groups, settings, and email config persist locally |
+| **Deployment** | Vercel | Deploy instantly with zero config |
+| | IIS | Self-host on Windows IIS with reverse proxy ([guide](docs/iis-deployment.md)) |
 
 ---
 
@@ -109,6 +114,13 @@ Runs **entirely in your browser**. No data sent to external servers beyond healt
 ---
 
 ## 📋 Changelog
+
+### v3.0
+- **Share Dashboard** — URL-encoded sharing (always works) + server-side short links (`/s/abc123`)
+- **Merge / Replace** — Recipients can merge shared config with or replace their existing dashboard
+- **File-based Storage** — Shared configs stored as JSON files (works on Vercel + IIS)
+- **IIS Deployment** — Full deployment guide for Windows IIS via reverse proxy
+- **Header Redesign** — Centered logo + title with action buttons below subtitle
 
 ### v2.5
 - **Bulk Import** — Paste links (comma/semicolon/pipe/newline) or upload CSV (1–3 columns with header detection), max 25 per batch

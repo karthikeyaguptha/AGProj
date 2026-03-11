@@ -1,6 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef, DragEvent } from "react";
+import {
+  encodeConfig,
+  decodeConfig,
+  extractConfigFromHash,
+  createShortLink,
+  ShareableEnvironment,
+} from "./utils/sharing";
 
 type EnvStatus = "up" | "down" | "pending";
 
@@ -105,6 +112,13 @@ export default function Dashboard() {
   const [importTab, setImportTab] = useState<"paste" | "file">("paste");
   const [bulkText, setBulkText] = useState("");
   const [importPreview, setImportPreview] = useState<string[]>([]);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareUrlCopied, setShareUrlCopied] = useState(false);
+  const [shortLinkLoading, setShortLinkLoading] = useState(false);
+  const [generatedShortLink, setGeneratedShortLink] = useState<string | null>(null);
+  const [shortLinkCopied, setShortLinkCopied] = useState(false);
+  const [showLoadConfigModal, setShowLoadConfigModal] = useState(false);
+  const [pendingSharedConfig, setPendingSharedConfig] = useState<ShareableEnvironment[] | null>(null);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const editNameRef = useRef<HTMLInputElement>(null);
@@ -194,6 +208,85 @@ export default function Dashboard() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  // ── Share Functions ──
+  const copyToClipboard = async (text: string): Promise<boolean> => {
+    // Try modern Clipboard API first (requires HTTPS or localhost)
+    if (navigator.clipboard && window.isSecureContext) {
+      try { await navigator.clipboard.writeText(text); return true; } catch { /* fall through */ }
+    }
+    // Fallback: hidden textarea + execCommand (works on HTTP)
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      ta.style.top = "-9999px";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch { return false; }
+  };
+
+  const handleShareUrl = async () => {
+    const shareUrl = `${window.location.origin}${window.location.pathname}#config=${encodeConfig(environments)}`;
+    const ok = await copyToClipboard(shareUrl);
+    if (ok) {
+      setShareUrlCopied(true);
+      addToast("Share URL copied to clipboard!", "success");
+      setTimeout(() => setShareUrlCopied(false), 3000);
+    } else {
+      addToast("Failed to copy URL", "error");
+    }
+  };
+
+  const handleGenerateShortLink = async () => {
+    setShortLinkLoading(true);
+    setGeneratedShortLink(null);
+    const id = await createShortLink(environments);
+    setShortLinkLoading(false);
+    if (id) {
+      const link = `${window.location.origin}/s/${id}`;
+      setGeneratedShortLink(link);
+      const ok = await copyToClipboard(link);
+      if (ok) {
+        setShortLinkCopied(true);
+        addToast("Short link copied to clipboard!", "success");
+        setTimeout(() => setShortLinkCopied(false), 3000);
+      } else {
+        addToast("Short link generated — copy it manually", "info");
+      }
+    } else {
+      addToast("Failed to generate short link. Use URL share instead.", "error");
+    }
+  };
+
+  const applySharedConfig = (mode: "merge" | "replace") => {
+    if (!pendingSharedConfig) return;
+    const prepared: Environment[] = pendingSharedConfig.map((e) => ({
+      id: Date.now().toString() + Math.random().toString(36).slice(2),
+      name: e.name,
+      url: e.url,
+      group: e.group || "Default",
+      status: "pending" as EnvStatus,
+      lastChecked: null,
+    }));
+    if (mode === "replace") {
+      setEnvironments(prepared);
+    } else {
+      setEnvironments((prev) => [...prev, ...prepared]);
+    }
+    prepared.forEach((e) => { prevStatusRef.current[e.id] = "pending"; checkStatus(e.id, e.url); });
+    addToast(`${prepared.length} monitor${prepared.length > 1 ? "s" : ""} loaded from shared config`, "success");
+    setShowLoadConfigModal(false);
+    setPendingSharedConfig(null);
+    // Clear hash from URL
+    if (window.location.hash) window.history.replaceState(null, "", window.location.pathname);
+  };
+
   // Init
   useEffect(() => {
     const saved = localStorage.getItem("env-dashboard-data");
@@ -204,6 +297,17 @@ export default function Dashboard() {
     const se = localStorage.getItem("env-dashboard-email");
     if (se) { try { setEmailConfig(JSON.parse(se)); } catch { } }
     setInitialized(true);
+
+    // Check for shared config in URL hash
+    const hash = window.location.hash;
+    const encoded = extractConfigFromHash(hash);
+    if (encoded) {
+      const config = decodeConfig(encoded);
+      if (config && config.length > 0) {
+        setPendingSharedConfig(config);
+        setShowLoadConfigModal(true);
+      }
+    }
   }, []);
 
   useEffect(() => { if (initialized) { if (environments.length > 0) localStorage.setItem("env-dashboard-data", JSON.stringify(environments)); else localStorage.removeItem("env-dashboard-data"); } }, [environments, initialized]);
@@ -347,11 +451,16 @@ export default function Dashboard() {
   return (
     <main className="container">
       <header className="header">
-        <div className="header-top">
-          <div>
-            <h1>Environment Pulse</h1>
-            <p>Real-time uptime monitoring for your deployment environments</p>
-          </div>
+        <div className="header-brand">
+          <svg className="header-logo" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+          <h1>Environment Pulse</h1>
+        </div>
+        <p>Real-time uptime monitoring for your deployment environments</p>
+        <div className="header-actions">
+          <button className="share-btn" onClick={() => { setShowShareModal(true); setShareUrlCopied(false); setShortLinkCopied(false); setGeneratedShortLink(null); }} disabled={environments.length === 0}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>
+            Share Dashboard
+          </button>
           <button className="import-link-btn" onClick={() => { setShowImportModal(true); setImportTab("paste"); setBulkText(""); setImportPreview([]); }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
             Import Links
@@ -608,6 +717,113 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* ─── Share Modal ─── */}
+      {showShareModal && (
+        <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
+          <div className="modal-content share-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Share Dashboard</h2>
+              <button className="modal-close" onClick={() => setShowShareModal(false)}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="share-hint">Share your dashboard configuration with others. Email/SMTP settings are <strong>never</strong> included.</p>
+
+              <div className="share-option">
+                <div className="share-option-header">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+                  <h3>URL Link</h3>
+                  <span className="share-option-badge">Always Works</span>
+                </div>
+                <p className="share-option-desc">Encodes your config directly in the URL. Works everywhere, no server needed.</p>
+                <button className={`btn btn-sm share-copy-btn ${shareUrlCopied ? "copied" : ""}`} onClick={handleShareUrl}>
+                  {shareUrlCopied ? (
+                    <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg> Copied!</>
+                  ) : (
+                    <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg> Copy URL Link</>
+                  )}
+                </button>
+              </div>
+
+              <div className="share-divider"><span>or</span></div>
+
+              <div className="share-option">
+                <div className="share-option-header">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" /></svg>
+                  <h3>Short Link</h3>
+                  <span className="share-option-badge badge-short">Server Stored</span>
+                </div>
+                <p className="share-option-desc">Generates a clean short URL. Config is stored on the server.</p>
+                {generatedShortLink ? (
+                  <div className="share-short-result">
+                    <code className="share-short-url">{generatedShortLink}</code>
+                    <button className={`btn btn-sm share-copy-btn ${shortLinkCopied ? "copied" : ""}`} onClick={async () => {
+                      const ok = await copyToClipboard(generatedShortLink); if (ok) { setShortLinkCopied(true); addToast("Short link copied!", "success"); setTimeout(() => setShortLinkCopied(false), 3000); } else { addToast("Failed to copy", "error"); }
+                    }}>
+                      {shortLinkCopied ? "Copied!" : "Copy"}
+                    </button>
+                  </div>
+                ) : (
+                  <button className="btn btn-sm btn-outline" onClick={handleGenerateShortLink} disabled={shortLinkLoading}>
+                    {shortLinkLoading ? "Generating..." : "Generate Short Link"}
+                  </button>
+                )}
+              </div>
+
+              <p className="share-info"><strong>{environments.length}</strong> monitor{environments.length !== 1 ? "s" : ""} will be shared across <strong>{Object.keys(grouped).length}</strong> group{Object.keys(grouped).length !== 1 ? "s" : ""}.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Load Shared Config Modal ─── */}
+      {showLoadConfigModal && pendingSharedConfig && (
+        <div className="modal-overlay">
+          <div className="modal-content share-load-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Shared Configuration Found</h2>
+            </div>
+            <div className="modal-body">
+              <p className="share-hint">Someone shared a dashboard configuration with you containing <strong>{pendingSharedConfig.length}</strong> monitor{pendingSharedConfig.length !== 1 ? "s" : ""}.</p>
+              <div className="share-preview-groups">
+                {Object.entries(
+                  pendingSharedConfig.reduce<Record<string, ShareableEnvironment[]>>((acc, e) => {
+                    const g = e.group || "Default";
+                    if (!acc[g]) acc[g] = [];
+                    acc[g].push(e);
+                    return acc;
+                  }, {})
+                ).map(([group, envs]) => (
+                  <div key={group} className="share-preview-group">
+                    <div className="share-preview-group-name">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" /></svg>
+                      {group} <span className="share-preview-count">({envs.length})</span>
+                    </div>
+                    <ul className="share-preview-list">
+                      {envs.map((e, i) => (
+                        <li key={i} className="share-preview-item">
+                          <span className="share-preview-name">{e.name}</span>
+                          <span className="share-preview-url">{e.url}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+              <div className="share-load-actions">
+                <button className="btn btn-add" onClick={() => applySharedConfig("merge")}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                  Merge with My Dashboard
+                </button>
+                <button className="btn btn-sm btn-outline" onClick={() => applySharedConfig("replace")}>Replace My Dashboard</button>
+                <button className="btn btn-sm" onClick={() => { setShowLoadConfigModal(false); setPendingSharedConfig(null); if (window.location.hash) window.history.replaceState(null, "", window.location.pathname); }} style={{ opacity: 0.6 }}>Dismiss</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ─── Privacy Policy Modal ─── */}
       {showPrivacy && (
         <div className="modal-overlay" onClick={() => setShowPrivacy(false)}>
@@ -651,7 +867,7 @@ export default function Dashboard() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
             <span>Environment Pulse</span>
           </div>
-          <div className="footer-version">v2.5</div>
+          <div className="footer-version">v3.0</div>
         </div>
         <div className="footer-links">
           <a href="https://github.com/karthikeyaguptha/agproj" target="_blank" rel="noopener noreferrer" className="footer-link">
